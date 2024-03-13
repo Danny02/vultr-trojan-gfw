@@ -1,0 +1,26 @@
+#cloud-config
+
+packages:
+  - python3-certbot-nginx
+  - trojan
+
+write_files:
+  - owner: root:root
+    path: /etc/cron.d/trojan-cert-reload
+    content: "0 3 * * 0 root /usr/bin/killall -s SIGUSR1 trojan\n"
+  - owner: root:root
+    path: /etc/trojan/config.json
+    content: |
+      ${indent(6, config)}
+
+runcmd:
+  - sysctl -w net.ipv4.tcp_fastopen=3
+  - ufw allow 'Nginx Full'
+  - ufw reload
+  - certbot certonly --nginx --register-unsafely-without-email --agree-tos -d ${domain}
+  - chmod +rx /etc/letsencrypt/live/
+  - chmod +rx /etc/letsencrypt/archive/
+  - chmod -R +r /etc/letsencrypt/archive/${domain}
+  - systemctl enable trojan
+  - systemctl start trojan
+  - journalctl -f -u trojan
