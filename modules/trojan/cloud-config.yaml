@@ -1,5 +1,9 @@
 #cloud-config
 
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+
 packages:
   - python3-certbot-nginx
   - trojan
@@ -13,6 +17,9 @@ write_files:
     content: |
       ${indent(6, config)}
 
+bootcmd:
+  - journalctl -f -u trojan
+
 runcmd:
   - sysctl -w net.ipv4.tcp_fastopen=3
   - ufw allow 'Nginx Full'
@@ -23,4 +30,3 @@ runcmd:
   - chmod -R +r /etc/letsencrypt/archive/${domain}
   - systemctl enable trojan
   - systemctl start trojan
-  - journalctl -f -u trojan
