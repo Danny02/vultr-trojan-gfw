@@ -11,8 +11,8 @@ variable "DOMAIN_ID" {
   type = string
   description = "id of vultr_dns_domain"
   validation {
-    condition = can(regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.DOMAIN_ID))
-    error_message = "no valid uuid"
+    condition = can(regex(".+[.].+", var.DOMAIN_ID))
+    error_message = "must not be a sub domain"
   }
 }
 
