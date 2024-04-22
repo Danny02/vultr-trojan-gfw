@@ -15,7 +15,7 @@ write_files:
 
 runcmd:
   - sysctl -w net.ipv4.tcp_fastopen=3
-  - echo starting.....
+  - echo starting......
   - ufw allow 'Nginx Full'
   - ufw reload
   - certbot certonly --nginx --register-unsafely-without-email --agree-tos -d ${domain}
