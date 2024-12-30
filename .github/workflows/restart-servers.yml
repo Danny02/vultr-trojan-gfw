@@ -1,0 +1,26 @@
+name: 'Restart Vultr servers'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  restart:
+    runs-on: ubuntu-latest
+    steps:
+      - id: pick_region
+        env:
+          REGIONS: ${{ vars.REGIONS }}
+        run: |
+          IFS=', ' read -r -a array <<< "$REGIONS"
+          len=${#array[@]}
+          idx=$(( ${{ github.run_number }} % len ))
+          echo "::set-output name=region::${array[idx]}"
+      - uses: danny02/tfe-run@main
+        with:
+          token: ${{ secrets.HCP_TOKEN }}
+          organization: ${{ vars.HCP_ORG }}
+          workspace: ${{ vars.HCP_WORKSPACE }}
+          replacements: |
+            module.trojan["${{ steps.pick_region.outputs.region }}"]
+          message: |
+            Run triggered using tfe-run (commit: ${{ github.SHA }})
