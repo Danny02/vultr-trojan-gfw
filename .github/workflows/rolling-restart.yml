@@ -2,6 +2,8 @@ name: 'Rolling restart Trojan instances'
 
 on:
   workflow_dispatch:
+  schedule:
+  - cron: "*/30 */2 * * *"
 
 jobs:
   restart:
@@ -15,14 +17,15 @@ jobs:
           len=${#array[@]}
           idx=$(( ${{ github.run_number }} % len ))
           echo "region=${array[idx]}" >> $GITHUB_OUTPUT
-      - uses: danny02/tfe-run@main
+      - uses: danny02/tfe-run@v1
         with:
           token: ${{ secrets.HCP_TOKEN }}
           organization: ${{ vars.HCP_ORG }}
           workspace: ${{ vars.HCP_WORKSPACE }}
+          print-outputs: "false"
           replacements: |
             module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_instance.proxy
             module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_dns_record.ipv4
             module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_dns_record.ipv6
           message: |
-            Run triggered using tfe-run (run: ${{ github.run_number }})
+            Cron: restart ${{ steps.pick_region.outputs.region }} (run: ${{ github.run_number }})
