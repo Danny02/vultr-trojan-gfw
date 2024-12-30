@@ -1,4 +1,4 @@
-name: 'Restart Vultr servers'
+name: 'Rolling restart Trojan instances'
 
 on:
   workflow_dispatch:
@@ -21,6 +21,8 @@ jobs:
           organization: ${{ vars.HCP_ORG }}
           workspace: ${{ vars.HCP_WORKSPACE }}
           replacements: |
-            module.trojan["${{ steps.pick_region.outputs.region }}"]
+            module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_instance.proxy
+            module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_dns_record.ipv4
+            module.trojan["${{ steps.pick_region.outputs.region }}"].vultr_dns_record.ipv6
           message: |
-            Run triggered using tfe-run (commit: ${{ github.SHA }})
+            Run triggered using tfe-run (run: ${{ github.run_number }})
