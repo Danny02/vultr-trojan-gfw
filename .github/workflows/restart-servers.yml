@@ -14,7 +14,7 @@ jobs:
           IFS=', ' read -r -a array <<< "$REGIONS"
           len=${#array[@]}
           idx=$(( ${{ github.run_number }} % len ))
-          echo "::set-output name=region::${array[idx]}"
+          echo "region=${array[idx]}" >> $GITHUB_OUTPUT
       - uses: danny02/tfe-run@main
         with:
           token: ${{ secrets.HCP_TOKEN }}
