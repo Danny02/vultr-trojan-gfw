@@ -2,8 +2,8 @@ name: 'Rolling restart Trojan instances'
 
 on:
   workflow_dispatch:
-  schedule:
-  - cron: "*/30 */2 * * *"
+  #schedule:
+  #- cron: "*/30 */2 * * *"
 
 jobs:
   restart:
